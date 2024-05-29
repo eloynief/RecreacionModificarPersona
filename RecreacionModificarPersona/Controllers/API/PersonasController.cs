@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BL;
+using Entidades;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -10,9 +12,41 @@ namespace RecreacionModificarPersona.Controllers.API
     {
         // GET: api/<PersonasController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+
+            IActionResult salida;
+
+            List<clasePersona> listado = new List<clasePersona>();
+
+
+
+            //try para ponerle los valores a la lista y ponerlos al IactionResult
+            try
+            {
+
+                listado = claseListadosBL.listadoPersonasAzureBBDDBL();
+
+                if (listado.Count == 0)
+                {
+
+                    salida = NoContent();
+                }
+                else
+                {
+                    salida = Ok(listado);
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                salida = BadRequest();
+
+            }
+
+
+            return salida;
         }
 
         // GET api/<PersonasController>/5
