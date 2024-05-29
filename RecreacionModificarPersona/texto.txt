@@ -1,0 +1,126 @@
+﻿Nos hemos dado cuenta que muchas de las personas que están insertadas en la BBDD tienen su departamento mal asignado. 
+Lo que nos ha pedido que hagamos es una página ASP.NET siguiendo el patrón MVC (Modelo-Vista-Controlador) y que cumpla lo siguiente:
+
+
+EN LA PAGINA TIENE QUE TENER
+
+Debe aparecer una tabla con cuatro columnas: <table>
+
+Una columna con el nombre de la persona.
+
+Otra columna con los apellidos de la persona.
+
+Otra con el nombre de su departamento.
+
+Una cuarta columna con un check box. <input type="checkbox">
+
+Debajo de la tabla debe aparecer un desplegable con todos los departamentos.
+
+La idea es poder cambiar de departamento varias personas a la vez de una manera rápida y sencilla. 
+
+Para hacerlo,  
+simplemente tendremos que seleccionar las personas que tengan su departamento mal asignada mediante los check boxes,
+después seleccionar de la lista el departamento al que deberían pertenecer y por último pulsar un botón “Actualizar departamento”.
+
+Cuando se pulse dicho botón, debemos actualizar TODAS las personas seleccionadas y cambiar su categoría a la que se ha elegido.
+
+Los domingos no se podrán realizar cambios en los departamentos. Debe aparecer un mensaje indicando esta norma si alguien intenta actualizar los datos en domingo.
+
+
+Mi entendimiento sobre el ejercicio: 
+	Eliges las personas de una lista con el checkbox, y luego de eso, recibes una lista de personas con el valor del checkbox activado (o como que esta seleccionada)
+	Una vez seleccionada, pulsas el boton Actualizar departamento y se cambia el id del departamento en funcion del id de la clase departamento de la bbdd
+
+
+
+Bibliotecas de clases
+
+
+
+1 Entities:
+
+
+	clasePersona:
+	
+		int id
+		String nombre
+		String apellidos
+		String telefono
+		String direccion
+		String foto
+		Datetime fechaNacimiento
+		int idDepartamento
+
+		propiedades de cada uno
+
+
+		constructor vacio y con todos los parametros
+
+		
+	claseDepartamento:
+	
+		int id
+		String nombre
+
+		propiedades de cada uno
+
+
+		constructor vacio y con todos los parametros
+
+
+
+
+
+
+
+
+
+2 DAL: listados
+
+	claseListados
+
+		public static List <clasePersona> listadoPersonasAzureBBDD{
+		}
+		
+		public static List <claseDepartamento> listadoDepartamentosAzureBBDD{
+		}
+
+3 BL: conexion de la DAL al controlador
+
+	claseListadosBL
+	
+		public static List <clasePersona> listadoPersonasAzureBBDDBL{
+			listadoDAL=claseListados.listadoPersonasAzureBBDD()
+		}
+		
+		public static List <claseDepartamento> listadoDepartamentosAzureBBDDBL{
+			listadoDAL=claseListados.listadoDepartamentosAzureBBDD()
+		}
+		
+
+
+
+Modelo ASP vista controlador
+
+Controller:
+	
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+
+		[HttpPost]
+        public IActionResult ActualizarPersona()
+        {
+
+
+			//codigo
+
+
+
+
+
+
+            return View();
+        }
