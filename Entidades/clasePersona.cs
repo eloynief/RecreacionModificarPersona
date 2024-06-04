@@ -61,7 +61,12 @@
         }
 
         // Constructor vacío
-        public clasePersona() { }
+        public clasePersona() 
+        {
+
+
+
+        }
 
         // Constructor con parámetros
         public clasePersona(int id, string nombre, string apellidos, string telefono, string direccion, string foto, DateTime fechaNacimiento, int idDepartamento)

@@ -98,6 +98,13 @@ Bibliotecas de clases
 		}
 		
 
+4 Modelos: clases adicionales para hacer mas facil el controlador y la vista:
+	
+	public class clasePersonaConNombreDep : clasePersona
+		
+		//siempre va a tener un valor, hasta en el constructor vacio
+        String nombreDepartamento;
+        Boolean seleccionar;
 
 
 Modelo ASP vista controlador

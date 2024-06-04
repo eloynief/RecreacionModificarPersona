@@ -1,4 +1,4 @@
-﻿@model List<Entidades.clasePersona>
+﻿@model List<Modelos.clasePersonaConNombreDep>
 @{
     ViewBag.Title = "Listado persona deps";
 }
@@ -20,9 +20,9 @@
             <tr>
                 <td>@persona.Nombre</td>
                 <td>@persona.Apellidos</td>
-                <td>departamento</td>
+                <td>@persona.NombreDepartamento</td>
                 <td>
-                    <input type="checkbox" name="personaIds" value="@persona.Id" />
+                    <input type="checkbox" name="personaIds" value="@persona.Seleccionar" />
                 </td>
             </tr>
         }
@@ -33,7 +33,7 @@
     <div class="form-group">
         <label for="nuevoDepartamentoId">Seleccionar nuevo departamento</label>
         <select id="nuevoDepartamentoId" name="nuevoDepartamentoId" class="form-control">
-            @foreach (var depto in (List<Entidades.claseDepartamento>)ViewBag.Departamentos)
+            @foreach (var depto in Model)
             {
                 <option value="@depto.Id">@depto.Nombre</option>
             }

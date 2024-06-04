@@ -5,6 +5,8 @@ namespace BL
 {
     public class claseListadosBL
     {
+        #region BL de los listados de azure
+
         /// <summary>
         /// funciones  para recoger los datos de la DAL y conectarlos al controlller
         /// </summary>
@@ -24,26 +26,13 @@ namespace BL
             return listadoDAL;
 		}
 
+        #endregion
 
-
-        /// <summary>
-        /// funcion para actualizar los departamentos 
-        /// </summary>
-        /// <param name="personaIds"></param>
-        /// <param name="nuevoDepartamentoId"></param>
-        public static void ActualizarDepartamentos(List<int> personaIds, int nuevoDepartamentoId)
+        public static void reglaNegocio()
         {
-            // Lógica para actualizar el departamento de las personas seleccionadas en la BBDD
-            var personas = listadoPersonasAzureBBDDBL();
 
-            List<claseDepartamento> deps = listadoDepartamentosAzureBBDDBL();
+            //codigo
 
-
-            foreach (var persona in personas.Where(p => personaIds.Contains(p.Id)))
-            {
-                persona.IdDepartamento = nuevoDepartamentoId;
-                // Lógica para guardar los cambios en la BBDD
-            }
         }
 
 

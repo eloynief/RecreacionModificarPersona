@@ -1,0 +1,425 @@
+﻿
+
+
+Nos hemos dado cuenta que muchas de las personas que están insertadas en la BBDD tienen su departamento mal asignado. 
+Lo que nos ha pedido que hagamos es una página ASP.NET siguiendo el patrón MVC (Modelo-Vista-Controlador) y que cumpla lo siguiente:
+
+
+EN LA PAGINA TIENE QUE TENER
+
+Debe aparecer una tabla con cuatro columnas: <table>
+
+Una columna con el nombre de la persona.
+
+Otra columna con los apellidos de la persona.
+
+Otra con el nombre de su departamento.
+
+Una cuarta columna con un check box. <input type="checkbox">
+
+Debajo de la tabla debe aparecer un desplegable con todos los departamentos.
+
+La idea es poder cambiar de departamento varias personas a la vez de una manera rápida y sencilla. 
+
+Para hacerlo,  
+simplemente tendremos que seleccionar las personas que tengan su departamento mal asignada mediante los check boxes,
+después seleccionar de la lista el departamento al que deberían pertenecer y por último pulsar un botón “Actualizar departamento”.
+
+Cuando se pulse dicho botón, debemos actualizar TODAS las personas seleccionadas y cambiar su categoría a la que se ha elegido.
+
+Los domingos no se podrán realizar cambios en los departamentos. Debe aparecer un mensaje indicando esta norma si alguien intenta actualizar los datos en domingo.
+
+
+Mi entendimiento sobre el ejercicio: 
+	Eliges las personas de una lista con el checkbox, y luego de eso, recibes una lista de personas con el valor del checkbox activado (o como que esta seleccionada)
+	Una vez seleccionada, pulsas el boton Actualizar departamento y se cambia el id del departamento en funcion del id de la clase departamento de la bbdd
+
+
+
+    Hay que crear un modelo el cual se llama clasePersonaConNombreDep que guarda un checkbox y guarda tambien el nombre del departamento en funcion del idDepartamento de la persona
+
+
+Bibliotecas de clases:
+
+
+1 Entidades
+	    
+        public class clasePersona
+        {
+            private int id;
+            private string nombre;
+            private string apellidos;
+            private string telefono;
+            private string direccion;
+            private string foto;
+            private DateTime fechaNacimiento;
+            private int idDepartamento;
+
+            // Propiedades
+            public int Id
+            {
+                get { return id; }
+                set { id = value; }
+            }
+
+            public string Nombre
+            {
+                get { return nombre; }
+                set { nombre = value; }
+            }
+
+            public string Apellidos
+            {
+                get { return apellidos; }
+                set { apellidos = value; }
+            }
+
+            public string Telefono
+            {
+                get { return telefono; }
+                set { telefono = value; }
+            }
+
+            public string Direccion
+            {
+                get { return direccion; }
+                set { direccion = value; }
+            }
+
+            public string Foto
+            {
+                get { return foto; }
+                set { foto = value; }
+            }
+
+            public DateTime FechaNacimiento
+            {
+                get { return fechaNacimiento; }
+                set { fechaNacimiento = value; }
+            }
+
+            public int IdDepartamento
+            {
+                get { return idDepartamento; }
+                set { idDepartamento = value; }
+            }
+
+            // Constructor vacío
+            public clasePersona() 
+            {
+
+
+
+            }
+
+            // Constructor con parámetros
+            public clasePersona(int id, string nombre, string apellidos, string telefono, string direccion, string foto, DateTime fechaNacimiento, int idDepartamento)
+            {
+                this.id = id;
+                this.nombre = nombre;
+                this.apellidos = apellidos;
+                this.telefono = telefono;
+                this.direccion = direccion;
+                this.foto = foto;
+                this.fechaNacimiento = fechaNacimiento;
+                this.idDepartamento = idDepartamento;
+            }
+        }
+
+        public class claseDepartamento
+        {
+            private int id;
+            private string nombre;
+
+            // Propiedades
+            public int Id
+            {
+                get { return id; }
+                set { id = value; }
+            }
+
+            public string Nombre
+            {
+                get { return nombre; }
+                set { nombre = value; }
+            }
+
+            #region constructores
+
+            // Constructor vacío
+            public claseDepartamento() { }
+
+            // Constructor con parámetros
+            public claseDepartamento(int id, string nombre)
+            {
+                this.id = id;
+                this.nombre = nombre;
+            }
+
+            #endregion
+
+        }
+
+
+
+
+
+
+
+
+2 DAL
+	
+
+	using Entidades;
+    using Microsoft.Data.SqlClient;
+
+    namespace DAL
+    {
+        public class ClaseListados
+        {
+            #region atributos para BBDD Azure
+            /// <summary>
+            /// atrivutos `de  SQL
+            /// </summary>
+            private static SqlConnection miConexion;
+            private static SqlCommand miComando;
+            private static SqlDataReader miLector;
+
+            #endregion
+
+            /// <summary>
+            /// funcion para recoger los datos de los departamentos de SQL en un listado
+            /// </summary>
+            /// <returns></returns>
+            public static List<claseDepartamento> ListadoDepartamentosAzureBBDD()
+            {
+                List<claseDepartamento> listado = new List<claseDepartamento>();
+
+                miConexion = new SqlConnection();
+                miComando = new SqlCommand();
+
+                claseDepartamento oDepartamento;
+
+                try
+                {
+                    miConexion.ConnectionString = EnlaceBBDD.Conexion();
+                    miConexion.Open();
+
+                    // Creamos el comando
+                    miComando.CommandText = "SELECT * FROM departamentos";
+                    miComando.Connection = miConexion;
+
+                    miLector = miComando.ExecuteReader();
+
+                    // Si hay líneas en el lector
+                    if (miLector.HasRows)
+                    {
+                        while (miLector.Read())
+                        {
+                            oDepartamento = new claseDepartamento
+                            {
+                                Id = (int)miLector["ID"],
+                                Nombre = (string)miLector["Nombre"]
+                            };
+
+                            listado.Add(oDepartamento);
+                        }
+                    }
+
+                    miLector.Close();
+                    miConexion.Close();
+                }
+                catch (SqlException exSql)
+                {
+                    throw exSql;
+                }
+
+                return listado;
+            }
+
+            /// <summary>
+            /// funcion para recoger los datos de los personas de SQL en un listado
+            /// </summary>
+            /// <returns></returns>
+            public static List<clasePersona> ListadoPersonasAzureBBDD()
+            {
+                List<clasePersona> listado = new List<clasePersona>();
+
+                miConexion = new SqlConnection();
+                miComando = new SqlCommand();
+
+                clasePersona oPersona;
+
+                try
+                {
+                    miConexion.ConnectionString = EnlaceBBDD.Conexion();
+                    miConexion.Open();
+
+                    // Creamos el comando
+                    miComando.CommandText = "SELECT * FROM personas";
+                    miComando.Connection = miConexion;
+
+                    miLector = miComando.ExecuteReader();
+
+                    // Si hay líneas en el lector
+                    if (miLector.HasRows)
+                    {
+                        while (miLector.Read())
+                        {
+                            oPersona = new clasePersona
+                            {
+                                Id = (int)miLector["ID"],
+                                Nombre = (string)miLector["Nombre"],
+                                Apellidos = (string)miLector["Apellidos"],
+                                Telefono = (string)miLector["Telefono"],
+                                Direccion = (string)miLector["Direccion"],
+                                Foto = (string)miLector["Foto"],
+                                FechaNacimiento = (DateTime)miLector["FechaNacimiento"],
+                                IdDepartamento = (int)miLector["IDDepartamento"]
+                            };
+
+                            listado.Add(oPersona);
+                        }
+                    }
+
+                    miLector.Close();
+                    miConexion.Close();
+                }
+                catch (SqlException exSql)
+                {
+                    throw exSql;
+                }
+
+                return listado;
+            }
+
+            /// <summary>
+            /// funcion para obtener el nombre del departamento en funcion del id escrito
+            /// </summary>
+            /// <param name="id"></param>
+            public static String obtenerNombreDepPorId(int id)
+            {
+                //nombre del departamento a devolver
+                String nombreDepar = "";
+
+                //llamamos la funion de azure
+                List<claseDepartamento> listadoDeps = ListadoDepartamentosAzureBBDD();
+
+                foreach(claseDepartamento dep in listadoDeps)
+                {
+                    if (dep.Id == id)
+                    {
+                        nombreDepar = dep.Nombre;
+                    }
+                }
+
+                return nombreDepar;
+            }
+
+
+
+            /// <summary>
+            /// funcion que llama a la base de datos y cambia el id de las personas cuyo id me vienen en el listado como parametro en la base de datos al id nuevo
+            /// </summary>
+            /// <param name="personaIds"></param>
+            /// <param name="nuevoDepartamentoId"></param>
+            public static void ActualizarDepartamentos(List<int> personaIds, int nuevoDepartamentoId)
+            
+
+
+        }
+    }
+
+
+
+
+
+
+3 BL
+	
+
+    using DAL;
+    using Entidades;
+
+    namespace BL
+    {
+        public class claseListadosBL
+        {
+            #region BL de los listados de azure
+
+            /// <summary>
+            /// funciones  para recoger los datos de la DAL y conectarlos al controlller
+            /// </summary>
+            /// <returns></returns>
+            public static List<clasePersona> listadoPersonasAzureBBDDBL()
+            {
+                List<clasePersona> listadoDAL = ClaseListados.ListadoPersonasAzureBBDD();
+
+                return listadoDAL;
+            }
+
+            public static List<claseDepartamento> listadoDepartamentosAzureBBDDBL()
+            {
+                List<claseDepartamento> listadoDAL = ClaseListados.ListadoDepartamentosAzureBBDD();
+
+
+                return listadoDAL;
+		    }
+
+            #endregion
+
+            public static void reglaNegocio(//parametros)
+            {
+
+                //codigo
+
+            }
+
+
+        }
+    }
+
+
+
+
+    
+4 Modelos: clases adicionales para hacer mas facil el controlador y la vista:
+	
+	public class clasePersonaConNombreDep : clasePersona
+		
+		//siempre va a tener un valor, hasta en el constructor vacio
+        String nombreDepartamento;
+        Boolean seleccionar;
+
+
+
+
+
+
+
+ASP vista controlador
+
+Controller:
+	
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+
+		[HttpPost]
+        public IActionResult ActualizarPersona()
+        {
+
+
+			//codigo
+
+
+
+
+
+
+            return View();
+        }
+
+
